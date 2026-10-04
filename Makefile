@@ -9,6 +9,7 @@ BUILD := build
 H13G_CXX ?= c++
 H13G_CXXFLAGS := -std=c++17 -O2 -Wall -Wextra -Werror -ffp-contract=off -Iplugins/H13G/Encoding
 H13G_PACKER := plugins/H13G/Encoding/H13GConstantPacker.cpp
+H13G_TASK_ENCODER := plugins/H13G/Encoding/H13GTaskEncoder.cpp
 
 .PHONY: test-h13g
 
@@ -22,6 +23,9 @@ test-h13g: $(BUILD)/h13g-pack $(BUILD)/test_h13g_constant_packing
 	$(BUILD)/test_h13g_constant_packing
 
 test: test-h13g
+
+$(BUILD)/h13g-encode-tasks: tools/h13g-encode-tasks.cpp $(H13G_TASK_ENCODER) plugins/H13G/Encoding/H13GTaskEncoder.h | $(BUILD)
+	$(H13G_CXX) $(H13G_CXXFLAGS) tools/h13g-encode-tasks.cpp $(H13G_TASK_ENCODER) -o $@
 
 $(BUILD)/gpt2-pack-probe: pack_probe.mm plugins/H16G/Encoding/H16GConstantPacker.mm | $(BUILD)
 	$(CXX) $(CXXFLAGS) -Iplugins/H16G/Encoding $^ $(FRAMEWORKS) -o $@
