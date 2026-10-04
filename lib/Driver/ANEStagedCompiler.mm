@@ -12,6 +12,7 @@
 #import "H16GProgramEncoder.h"
 #import "H16GProgramAssembler.h"
 #import "H16GTarget.h"
+#import "../../plugins/H13G/Encoding/H13GProgramEncoder.h"
 #import "MILLexer.h"
 #import "MILGraphImporter.h"
 #import "MILParser.h"
@@ -26,7 +27,16 @@ static ANESourceRange syntheticRange(void) {
                                 modelRoot:(NSURL *)modelRoot
                                    target:(NSString *)targetName
                               diagnostics:(ANEDiagnosticEngine *)diagnostics {
-    if (![targetName isEqualToString:@"H16G"]) {
+    return [self compileMILData:milData modelRoot:modelRoot target:targetName
+                  objectLabels:nil diagnostics:diagnostics];
+}
++ (ANEExecutableBundle *)compileMILData:(NSData *)milData
+                                modelRoot:(NSURL *)modelRoot
+                                   target:(NSString *)targetName
+                             objectLabels:(NSDictionary<NSString *, NSString *> *)objectLabels
+                              diagnostics:(ANEDiagnosticEngine *)diagnostics {
+    BOOL h13g = [targetName isEqualToString:@"H13G"];
+    if (!h13g && ![targetName isEqualToString:@"H16G"]) {
         [diagnostics emitSeverity:ANEDiagnosticSeverityError
             code:@"ane.driver.unsupported-target"
             message:[NSString stringWithFormat:@"unsupported target '%@'", targetName]
@@ -42,6 +52,18 @@ static ANESourceRange syntheticRange(void) {
         ? [MILGraphImporter importProgram:syntax diagnostics:diagnostics] : nil;
     if (!module || module.functions.count != 1 ||
         ![ANEGraphVerifier verifyModule:module diagnostics:diagnostics]) return nil;
+
+    if (h13g) {
+        ANEHWXArtifact *artifact = [H13GProgramEncoder encodeFunction:module.functions[0]
+            modelRoot:modelRoot objectLabels:objectLabels diagnostics:diagnostics];
+        if (!artifact) return nil;
+        return [[ANEExecutableBundle alloc] initWithTarget:targetName
+            artifacts:@[artifact] dispatchPlan:@[@0] passTrace:@[
+                @"mil.import-operation-graph", @"h13g.verify-typed-contract",
+                @"h13g.select-affine-strategy", @"h13g.pack-constants",
+                @"h13g.encode-tasks", @"h13g.write-object"]
+            compositionTrace:@[@"measured H13G fused graph schedule"]];
+    }
 
     ANEOperationGraph *graph = [[ANEOperationGraph alloc]
         initWithFunction:module.functions[0] diagnostics:diagnostics];

@@ -9,7 +9,8 @@
 static void printUsage(const char *program) {
     fprintf(stderr,
         "usage: %s --mil FILE --model-root DIR "
-        "--output DIR [--target H16G]\n", program);
+        "--output DIR [--target H16G|H13G] "
+        "[--source-label TEXT --output-label TEXT]\n", program);
 }
 
 static NSString *severityName(ANEDiagnosticSeverity severity) {
@@ -54,6 +55,7 @@ int main(int argc, const char *argv[]) {
         NSString *target = arguments[@"--target"] ?: @"H16G";
         NSSet<NSString *> *accepted = [NSSet setWithArray:@[
             @"--mil", @"--model-root", @"--output", @"--target",
+            @"--source-label", @"--output-label",
         ]];
         for (NSString *key in arguments) {
             if (![accepted containsObject:key]) {
@@ -74,9 +76,12 @@ int main(int argc, const char *argv[]) {
         }
         ANEDiagnosticEngine *diagnostics = [[ANEDiagnosticEngine alloc] init];
         ANECompiler *compiler = [[ANECompiler alloc] init];
+        NSDictionary *objectLabels = @{
+            @"source-label": arguments[@"--source-label"] ?: milPath,
+            @"output-label": arguments[@"--output-label"] ?: [output stringByAppendingPathComponent:@"program-0.hwx"]};
         ANEExecutableBundle *bundle = [compiler compileMILData:milData
             modelRoot:[NSURL fileURLWithPath:modelRoot isDirectory:YES]
-            target:target diagnostics:diagnostics];
+            target:target objectLabels:objectLabels diagnostics:diagnostics];
         printDiagnostics(diagnostics);
         if (!bundle) return 65;
 

@@ -10,6 +10,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable ANEExecutableBundle *)compileMILData:(NSData *)milData
                                        modelRoot:(NSURL *)modelRoot
                                           target:(NSString *)target
+                                    objectLabels:(nullable NSDictionary<NSString *, NSString *> *)objectLabels
+                                     diagnostics:(ANEDiagnosticEngine *)diagnostics;
+- (nullable ANEExecutableBundle *)compileMILData:(NSData *)milData
+                                       modelRoot:(NSURL *)modelRoot
+                                          target:(NSString *)target
                                      diagnostics:(ANEDiagnosticEngine *)diagnostics;
 @end
 

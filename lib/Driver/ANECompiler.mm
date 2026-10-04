@@ -7,8 +7,16 @@
 - (ANEExecutableBundle *)compileMILData:(NSData *)milData
                               modelRoot:(NSURL *)modelRoot
                                  target:(NSString *)target
+                           objectLabels:(NSDictionary<NSString *, NSString *> *)objectLabels
                             diagnostics:(ANEDiagnosticEngine *)diagnostics {
     return [ANEStagedCompiler compileMILData:milData modelRoot:modelRoot
-                                      target:target diagnostics:diagnostics];
+        target:target objectLabels:objectLabels diagnostics:diagnostics];
+}
+- (ANEExecutableBundle *)compileMILData:(NSData *)milData
+                              modelRoot:(NSURL *)modelRoot
+                                 target:(NSString *)target
+                            diagnostics:(ANEDiagnosticEngine *)diagnostics {
+    return [ANEStagedCompiler compileMILData:milData modelRoot:modelRoot
+        target:target objectLabels:nil diagnostics:diagnostics];
 }
 @end

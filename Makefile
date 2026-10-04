@@ -10,6 +10,8 @@ H13G_CXX ?= c++
 H13G_CXXFLAGS := -std=c++17 -O2 -Wall -Wextra -Werror -ffp-contract=off -Iplugins/H13G/Encoding
 H13G_PACKER := plugins/H13G/Encoding/H13GConstantPacker.cpp
 H13G_TASK_ENCODER := plugins/H13G/Encoding/H13GTaskEncoder.cpp
+H13G_COMPILER_SOURCES := plugins/H13G/H13GGraphContract.mm plugins/H13G/Encoding/H13GObjectWriter.mm plugins/H13G/Encoding/H13GProgramEncoder.mm $(H13G_TASK_ENCODER) $(H13G_PACKER)
+H13G_COMPILER_HEADERS := plugins/H13G/H13GGraphContract.h plugins/H13G/Encoding/H13GObjectWriter.h plugins/H13G/Encoding/H13GProgramEncoder.h plugins/H13G/Encoding/H13GTaskEncoder.h plugins/H13G/Encoding/H13GConstantPacker.h plugins/H13G/Encoding/H13GTargetData.inc
 
 .PHONY: test-h13g
 
@@ -34,6 +36,9 @@ SUPPORT_SOURCES := lib/Support/ANEDiagnostic.mm
 MIL_LEXER_SOURCES := lib/MIL/MILLexer.mm
 MIL_PARSER_SOURCES := lib/MIL/MILSyntax.mm lib/MIL/MILParser.mm lib/MIL/MILPrinter.mm
 GRAPH_SOURCES := lib/IR/ANEGraphIR.mm lib/IR/ANEGraphVerifier.mm lib/MIL/MILGraphImporter.mm
+
+$(BUILD)/h13g-inspect: tools/h13g-inspect.mm plugins/H13G/H13GGraphContract.mm $(SUPPORT_SOURCES) $(MIL_LEXER_SOURCES) $(MIL_PARSER_SOURCES) $(GRAPH_SOURCES) | $(BUILD)
+	$(CXX) $(CXXFLAGS) -Ilib/MIL -Ilib/IR -Iplugins/H13G $^ $(FRAMEWORKS) -o $@
 OP_GRAPH_SOURCES := lib/IR/ANEOperationGraph.mm
 TRANSFORM_SOURCES := lib/Transform/ANENormalizePass.mm lib/Transform/ANEDecomposePass.mm
 FUSION_SOURCES := lib/Transform/ANEFusionPass.mm plugins/H16G/H16GTarget.mm
@@ -43,7 +48,7 @@ STRUCTURED_TD_SOURCES := plugins/H16G/Encoding/H16GTDWriter.mm plugins/H16G/Enco
 TASK_ENCODING_SOURCES := plugins/H16G/Encoding/H16GEncodedTask.mm plugins/H16G/Encoding/H16GTaskEncoder.mm plugins/H16G/Encoding/H16GTaskComposer.mm
 CONSTANT_PACKER_SOURCES := plugins/H16G/Encoding/H16GConstantPacker.mm
 OBJECT_WRITER_SOURCES := lib/HWX/HWXObjectWriter.mm
-STAGED_DRIVER_SOURCES := lib/Driver/ANEStagedCompiler.mm plugins/H16G/Encoding/H16GProgramEncoder.mm plugins/H16G/Encoding/H16GProgramAssembler.mm $(TASK_ENCODING_SOURCES)
+STAGED_DRIVER_SOURCES := lib/Driver/ANEStagedCompiler.mm plugins/H16G/Encoding/H16GProgramEncoder.mm plugins/H16G/Encoding/H16GProgramAssembler.mm $(TASK_ENCODING_SOURCES) $(H13G_COMPILER_SOURCES)
 PASS_SOURCES := lib/Pass/ANEPassManager.mm
 PLUGIN_SOURCES := lib/Plugin/ANEPluginRegistry.mm
 DRIVER_SOURCES := lib/Model/ANEBlobResolver.mm lib/Runtime/ANEExecutableBundle.mm lib/Driver/ANECompiler.mm
@@ -216,8 +221,8 @@ $(BUILD)/prepare_staged_attention: tests/hardware/prepare_staged_attention.mm $(
 $(BUILD)/test_compiler_e2e: tests/test_compiler_e2e.mm $(PRODUCTION_COMPILER_SOURCES) | $(BUILD)
 	$(CXX) $(CXXFLAGS) -Ilib/MIL -Ilib/IR -Ilib/Transform -Ilib/Planning -Ilib/Driver -Ilib/HWX -Ilib/Model -Ilib/Runtime -Iplugins/H16G -Iplugins/H16G/Encoding $^ $(FRAMEWORKS) -o $@
 
-$(BUILD)/mil-hwxc: tools/mil-hwxc.mm $(PRODUCTION_COMPILER_SOURCES) | $(BUILD)
-	$(CXX) $(CXXFLAGS) -Ilib/MIL -Ilib/IR -Ilib/Transform -Ilib/Planning -Ilib/Driver -Ilib/HWX -Ilib/Model -Ilib/Runtime -Iplugins/H16G -Iplugins/H16G/Encoding $^ $(FRAMEWORKS) -o $@
+$(BUILD)/mil-hwxc: tools/mil-hwxc.mm $(PRODUCTION_COMPILER_SOURCES) $(H13G_COMPILER_HEADERS) | $(BUILD)
+	$(CXX) $(CXXFLAGS) -Ilib/MIL -Ilib/IR -Ilib/Transform -Ilib/Planning -Ilib/Driver -Ilib/HWX -Ilib/Model -Ilib/Runtime -Iplugins/H16G -Iplugins/H16G/Encoding $(filter %.mm %.cpp,$^) $(FRAMEWORKS) -o $@
 
 test-cli: $(BUILD)/mil-hwxc
 	bash tests/test_cli.sh
