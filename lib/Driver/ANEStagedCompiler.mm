@@ -35,6 +35,8 @@ static ANESourceRange syntheticRange(void) {
                                    target:(NSString *)targetName
                              objectLabels:(NSDictionary<NSString *, NSString *> *)objectLabels
                               diagnostics:(ANEDiagnosticEngine *)diagnostics {
+    // H13 aliases the measured base-M1 backend; bundles keep its canonical name.
+    if ([targetName isEqualToString:@"H13"]) targetName = @"H13G";
     BOOL h13g = [targetName isEqualToString:@"H13G"];
     if (!h13g && ![targetName isEqualToString:@"H16G"]) {
         [diagnostics emitSeverity:ANEDiagnosticSeverityError

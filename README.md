@@ -67,6 +67,10 @@ packets, links, alignment, coefficients, object commands, symbols and
 relocations. It does not read a reference instruction stream or HWX template
 when compiling. The compiler input is MIL plus the raw FP16 BLOBFILE tensors.
 
+The CLI accepts `--target H13`, and the compiler API accepts target `H13`, as
+aliases for `H13G`. Both select the base-M1 backend with the same captured GPT-2
+coverage; output manifests and the CLI's compiled-target message use `H13G`.
+
 Build and compile the complete captured graph set:
 
 ```sh

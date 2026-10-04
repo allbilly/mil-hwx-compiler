@@ -9,8 +9,9 @@
 static void printUsage(const char *program) {
     fprintf(stderr,
         "usage: %s --mil FILE --model-root DIR "
-        "--output DIR [--target H16G|H13G] "
-        "[--source-label TEXT --output-label TEXT]\n", program);
+        "--output DIR [--target H16G|H13G|H13] "
+        "[--source-label TEXT --output-label TEXT]\n"
+        "  H13 is an alias for the base-M1 H13G backend.\n", program);
 }
 
 static NSString *severityName(ANEDiagnosticSeverity severity) {
