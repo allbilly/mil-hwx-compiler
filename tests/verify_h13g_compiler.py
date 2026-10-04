@@ -98,6 +98,37 @@ def check_independence(dump, compiler):
             raise AssertionError("changing final LN beta changed the instruction schedule")
         checks.append(dict(case="changed-learned-beta", native_repacking=True))
 
+        # Change a projection weight not present in the metadata alias catalog.
+        # Verify its packed location and a new content-derived symbol, while
+        # preserving the instruction stream selected from the typed graph.
+        matrix_model = temporary / "changed-matrix"
+        source = dump / "bundles/decode_proj_L0_loaded"
+        matrix_model.mkdir()
+        shutil.copy2(source / "model.mil", matrix_model / "model.mil")
+        shutil.copytree(source / "weights", matrix_model / "weights")
+        matrix_mil = (matrix_model / "model.mil").read_text()
+        chunk = int(re.search(r"\bq_W = const.*offset=uint64\((\d+)\)", matrix_mil)[1])
+        blob_path = matrix_model / "weights/packed.bin"
+        blob = bytearray(blob_path.read_bytes())
+        matrix_offset = struct.unpack_from("<Q", blob, chunk + 16)[0]
+        struct.pack_into("<e", blob, matrix_offset, 0.75)
+        blob_path.write_bytes(blob)
+        destination = temporary / "changed-matrix-compiled"
+        process = invoke(compiler, matrix_model, destination)
+        if process.returncode: raise AssertionError(process.stderr)
+        actual, ac = read_object(destination / "program-0.hwx")
+        original, oc = read_object(dump / "hwx/decode_proj_L0/model.hwx")
+        packed = section_bytes(actual, ac, "__KERN_0", "__kern_0")
+        if packed[256 + 16 * 2:256 + 16 * 2 + 2] != struct.pack("<e", 0.75):
+            raise AssertionError("changed matrix was not repacked from its source blob")
+        if section_bytes(actual, ac, "__TEXT", "__text") != section_bytes(original, oc, "__TEXT", "__text"):
+            raise AssertionError("changed projection weight changed the measured instruction schedule")
+        digest = hashlib.sha256(packed[256:1181952]).hexdigest().upper()
+        if ("K" + digest + "_ne_0").encode() not in actual:
+            raise AssertionError("unknown coefficient data did not receive a fresh content-derived symbol")
+        checks.append(dict(case="changed-learned-matrix", native_repacking=True,
+                           new_content_derived_symbol=True, instructions_unchanged=True))
+
         # An unsupported literal, geometry or operand edge must fail instead
         # of silently emitting the measured program for a different graph.
         for label, changed in [

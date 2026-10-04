@@ -491,6 +491,12 @@
       "native_repacking": true
     },
     {
+      "case": "changed-learned-matrix",
+      "native_repacking": true,
+      "new_content_derived_symbol": true,
+      "instructions_unchanged": true
+    },
+    {
       "case": "unsupported-epsilon",
       "rejected": true
     },
@@ -515,5 +521,14 @@
     "plugins/H13G/Encoding/H13GTaskEncoder.h": "89e6369c42b5d6bb83c95d06b1001933d9853b630e779f7bdadd4f98cb41f8b0",
     "plugins/H13G/H13GGraphContract.h": "4075dfb89fd854a4a08f7ac60aca58d40f27de8bfe372b65c7b1e82837c592ef",
     "plugins/H13G/H13GGraphContract.mm": "5a8b94ae021ed9d18914dc8f02d5656c4ddaef78179c6256636c01d7227d1dc3"
+  },
+  "software_tests": {
+    "command": "make test -j4",
+    "exit_code": 0,
+    "shell_checks_passed": [
+      "compiler CLI",
+      "production staged-route guard",
+      "release hygiene"
+    ]
   }
 }

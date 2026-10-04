@@ -1,21 +1,96 @@
 # MIL-to-HWX compiler
 
 This repository contains a research compiler for the H16G Apple Neural Engine
-in the M4. It reads textual MIL, builds a typed graph, lowers supported
-operations, and writes new HWX objects without calling Apple's compiler.
+in the M4, with a measured H13G/base-M1 backend for the captured GPT-2 graphs.
+It reads textual MIL and ordinary model weight blobs and writes new HWX
+objects without calling Apple's compiler.
 
 The project is a canary for the compiler pipeline recovered in *Inside the M4
 Apple Neural Engine*, Part 4b. It shows which parts of that pipeline are
 understood well enough to reproduce in code and verify on hardware.
 
-## Local M1 / H13G weight-packing addition
+## Local M1 / H13G GPT-2 compiler
+
+`mil-hwxc --target H13G` compiles all 49 graphs captured in
+`~/Desktop/GPT2-ANE-Dump`. The native backend emits task headers, register
+packets, links, alignment, coefficients, object commands, symbols and
+relocations. It does not read a reference instruction stream or HWX template
+when compiling. The compiler input is MIL plus the raw FP16 BLOBFILE tensors.
+
+Build and compile the complete captured graph set:
+
+```sh
+make build/mil-hwxc
+python3 tools/compile_h13g_gpt2.py \
+  --models ~/Desktop/GPT2-ANE-Dump/bundles \
+  --output build/h13g-gpt2
+```
+
+Each kernel gets a normal compiler bundle containing `program-0.hwx` and a
+binding manifest. The top-level manifest lists all kernel bundles and hashes.
+You can compile one graph directly:
+
+```sh
+./build/mil-hwxc \
+  --mil ~/Desktop/GPT2-ANE-Dump/bundles/decode_ffn_L6_loaded/model.mil \
+  --model-root ~/Desktop/GPT2-ANE-Dump/bundles/decode_ffn_L6_loaded \
+  --target H13G --output build/h13g-ffn
+```
+
+Run the full reference comparison:
+
+```sh
+make verify-h13g-gpt2
+# For another reference directory:
+make verify-h13g-gpt2 H13G_DUMP="$HOME/Desktop/GPT2-ANE-Dump"
+```
+
+`h13g-task-validation.json` records exact reconstruction of all 1,574 tasks.
+`h13g-compiler-validation.json` records 49/49 complete HWX files matching the
+originals and eleven independence/rejection checks. These include renamed
+functions, SSA identifiers and weight files across all six instruction
+variants, changed learned coefficients, and rejection of unsupported
+constants, geometry and operand edges.
+
+Whole-file equality includes historical debug metadata. The verifier passes
+the original source/output labels through `--source-label` and
+`--output-label`. Ordinary compilation records the current paths; its task,
+constant and coefficient sections still match the captured payloads.
+The target also contains compatibility aliases for Apple's opaque coefficient
+symbol IDs, indexed by the SHA-256 of freshly packed coefficient data.
+Aliases affect symbols only. New coefficients receive new content-derived
+symbols. Source labels and symbol hashes never select instructions.
+
+The supported H13G coverage is deliberately explicit: FP16 `[1,768,1,32]`
+LayerNorm; LayerNorm plus three 768-channel projections; LayerNorm, 768-to-3072
+expansion, tanh GELU, projection and residual; and masked attention with 12
+heads, sequence 32 and head dimension 64. Structural contracts check every
+operation, type, literal and operand edge, in the captured declaration order.
+Function and SSA names and weight-file paths are not legality keys. Other
+graphs receive `h13g.legalize.unsupported-graph`.
+
+The backend uses five measured fused graph schedules and decoded register
+fields in `H13GTargetData.inc`. The FFN engine-affine schedule computes its
+bias scale from the smallest nonzero FP32 `beta/gamma`, selecting a power of
+two that reaches `2^-16`. This reproduces the layer-6 scale 32 and layer-10
+scale 2 without selecting a schedule by layer number. These observations are
+validated for the captured checkpoint and are not general H13G coverage.
+`tools/derive_h13g_target.py` can reproduce the target catalog from the original
+captures after `make build/h13g-inspect`; derivation is a developer step.
+
+Hardware execution of these compiler outputs has not been rerun. The existing
+runtime in this repository continues to accept H16G bundles. The separate
+`~/ane/gpt2` package supplies the GPT-2 inference runner and H13G replay path;
+this change supplies independent compilation of its captured ANE graph set.
+
+### Standalone H13G weight packing
 
 This checkout adds a standalone C++ packer for the captured base-M1 GPT-2
 layouts in `plugins/H13G/Encoding/H13GConstantPacker.{h,cpp}`. It generates
 coefficient bytes from ordinary little-endian FP16 matrices and biases. It
 does not call Apple's compiler or read dumped coefficient bytes during packing.
-The upstream MIL-to-HWX compiler still targets H16G; this addition does not
-provide an H13G instruction encoder or an M1 runtime.
+The upstream compiler's H16G route remains available alongside the new H13G
+compiler route. The packer can also be built independently of both routes.
 
 Build and test the packer without Foundation or other macOS frameworks:
 
@@ -106,7 +181,7 @@ xcode-select --install
 Clone the repository and run the software test suite:
 
 ```sh
-git clone https://github.com/maderix/mil-hwx-compiler.git
+git clone https://github.com/allbilly/mil-hwx-compiler.git
 cd mil-hwx-compiler
 make test -j4
 ```
@@ -191,8 +266,8 @@ MIL source
 ```
 
 The production path does not load an Apple-compiled HWX file, choose code from
-a fixture name, or patch an existing container. `HWXObjectWriter` creates each
-object from compiler data structures. The compiler reparses the completed
+a fixture name, or patch an existing container. `HWXObjectWriter` (H16G) and
+`H13GObjectWriter` create objects from compiler data structures. The compiler reparses the completed
 object before accepting it.
 
 Multi-operation graphs are partitioned according to target capability tables.

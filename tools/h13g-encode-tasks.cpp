@@ -5,8 +5,9 @@
 #include <stdexcept>
 
 // Developer tool: text describes decoded fields, never binary task templates.
-// Each task has ten header controls followed by packet count; each packet has
-// address, value count and values. All numbers are hexadecimal.
+// Each task has ten header controls, its optional extended word, schedule
+// padding, then packet count. Each packet has address, value count and values.
+// All numbers are hexadecimal.
 int main(int argc, const char* argv[]) {
     if (argc != 3) {
         std::cerr << "usage: h13g-encode-tasks FIELDS OUTPUT\n";

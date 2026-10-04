@@ -13,7 +13,12 @@ H13G_TASK_ENCODER := plugins/H13G/Encoding/H13GTaskEncoder.cpp
 H13G_COMPILER_SOURCES := plugins/H13G/H13GGraphContract.mm plugins/H13G/Encoding/H13GObjectWriter.mm plugins/H13G/Encoding/H13GProgramEncoder.mm $(H13G_TASK_ENCODER) $(H13G_PACKER)
 H13G_COMPILER_HEADERS := plugins/H13G/H13GGraphContract.h plugins/H13G/Encoding/H13GObjectWriter.h plugins/H13G/Encoding/H13GProgramEncoder.h plugins/H13G/Encoding/H13GTaskEncoder.h plugins/H13G/Encoding/H13GConstantPacker.h plugins/H13G/Encoding/H13GTargetData.inc
 
-.PHONY: test-h13g
+.PHONY: test-h13g verify-h13g-gpt2
+H13G_DUMP ?= $(HOME)/Desktop/GPT2-ANE-Dump
+
+verify-h13g-gpt2: $(BUILD)/mil-hwxc $(BUILD)/h13g-encode-tasks
+	python3 tests/verify_h13g_task_encoding.py --dump "$(H13G_DUMP)" --report h13g-task-validation.json
+	python3 tests/verify_h13g_compiler.py --dump "$(H13G_DUMP)"
 
 $(BUILD)/h13g-pack: tools/h13g-pack.cpp $(H13G_PACKER) plugins/H13G/Encoding/H13GConstantPacker.h | $(BUILD)
 	$(H13G_CXX) $(H13G_CXXFLAGS) tools/h13g-pack.cpp $(H13G_PACKER) -o $@
