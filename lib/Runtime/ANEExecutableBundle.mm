@@ -1,8 +1,28 @@
 #import "ANEExecutableBundle.h"
 
 #import "HWXImage.h"
+#import "ANEJSONSerialization.h"
+#include <errno.h>
 
 static NSString *const ANEBundleErrorDomain = @"dev.maderix.ANEBundle";
+
+static NSData *readBundleFile(NSURL *url, NSError **error) {
+#ifdef GNUSTEP
+    // Base has no dataWithContentsOfURL:options:error: overload.
+    errno = 0;
+    NSData *data = [NSData dataWithContentsOfFile:url.path];
+    if (!data && error) {
+        int code = errno ? errno : EIO;
+        *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:code
+            userInfo:@{NSLocalizedDescriptionKey:
+                [NSString stringWithFormat:@"cannot read bundle file '%@': %s",
+                    url.path, strerror(code)]}];
+    }
+    return data;
+#else
+    return [NSData dataWithContentsOfURL:url options:0 error:error];
+#endif
+}
 
 static ANEExecutableBundle *bundleFailure(NSError **error, NSInteger code,
                                           NSString *message) {
@@ -133,9 +153,7 @@ static NSArray<NSString *> *sharedSurfaceIdentifiers(
         @"passTrace": self.passTrace,
         @"compositionTrace": self.compositionTrace,
     };
-    NSData *manifestData = [NSJSONSerialization dataWithJSONObject:manifest
-        options:NSJSONWritingPrettyPrinted | NSJSONWritingSortedKeys
-        error:error];
+    NSData *manifestData = ANEJSONData(manifest, YES, error);
     return manifestData && [manifestData writeToURL:
         [directory URLByAppendingPathComponent:@"manifest.json"]
         options:NSDataWritingAtomic error:error];
@@ -145,8 +163,7 @@ static NSArray<NSString *> *sharedSurfaceIdentifiers(
                                           error:(NSError **)error {
     NSURL *manifestURL =
         [directory URLByAppendingPathComponent:@"manifest.json"];
-    NSData *manifestData = [NSData dataWithContentsOfURL:manifestURL
-                                                options:0 error:error];
+    NSData *manifestData = readBundleFile(manifestURL, error);
     if (!manifestData) return nil;
     id root = [NSJSONSerialization JSONObjectWithData:manifestData
                                                options:0 error:error];
@@ -182,8 +199,7 @@ static NSArray<NSString *> *sharedSurfaceIdentifiers(
             return bundleFailure(error, 4,
                 @"artifact record has an invalid file or bindings field");
         NSURL *imageURL = [directory URLByAppendingPathComponent:fileName];
-        NSData *imageData = [NSData dataWithContentsOfURL:imageURL
-                                                  options:0 error:error];
+        NSData *imageData = readBundleFile(imageURL, error);
         if (!imageData) return nil;
         NSError *parseError = nil;
         if (![HWXImage imageWithData:imageData error:&parseError]) {

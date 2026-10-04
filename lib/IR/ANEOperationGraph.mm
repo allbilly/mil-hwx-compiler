@@ -1,9 +1,11 @@
 #import "ANEOperationGraph.h"
 
+#include <mutex>
+
 static ANEOperationKind classifyOperation(NSString *name) {
     static NSDictionary<NSString *, NSNumber *> *kinds;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
+    static std::once_flag once;
+    std::call_once(once, [] {
         kinds = @{
             @"const": @(ANEOperationKindConstant),
             @"conv": @(ANEOperationKindConv),
@@ -110,7 +112,11 @@ static NSString *kindName(ANEOperationKind kind) {
 }
 - (void)markFoldedIntoNumericBoundary { _foldedIntoNumericBoundary = YES; }
 - (NSArray<ANEOperationNode *> *)users {
+#ifndef GNUSTEP
     [_weakUsers compact];
+#endif
+    // Skip cleared weak slots while reading. GNUstep Base 1.31's compact
+    // drops live entries; rebuildUseLists already resets storage on rewrites.
     NSMutableArray<ANEOperationNode *> *result = [NSMutableArray array];
     for (NSUInteger i = 0; i < _weakUsers.count; ++i) {
         ANEOperationNode *node = (__bridge ANEOperationNode *)[_weakUsers pointerAtIndex:i];

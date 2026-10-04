@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
-#import <CommonCrypto/CommonDigest.h>
-#import <mach-o/loader.h>
+#import "ANESHA256.h"
+#import "ANEMachO.h"
 
 #import "ANEDiagnostic.h"
 #import "ANEExecutableBundle.h"
@@ -66,8 +66,8 @@ static NSString *firstFVMLIBSectionName(NSData *imageData) {
 }
 
 static NSString *sha256(NSData *data) {
-    uint8_t digest[CC_SHA256_DIGEST_LENGTH];
-    CC_SHA256(data.bytes, (CC_LONG)data.length, digest);
+    uint8_t digest[ANE_SHA256_DIGEST_LENGTH];
+    ANESHA256(data.bytes, data.length, digest);
     NSMutableString *text = [NSMutableString stringWithCapacity:64];
     for (NSUInteger i = 0; i < sizeof(digest); ++i)
         [text appendFormat:@"%02x", digest[i]];
@@ -731,7 +731,7 @@ static void testBinaryALUShapesTraverseTheProductionCompiler(void) {
         expect(bundle!=nil&&diagnostics.errorCount==0,
             @"measured add geometry compiles through the staged path");
         if(!bundle)continue;
-        HWXImage *image=[HWXImage imageWithData:bundle.artifacts[0].image error:nil];
+        HWXImage *image=[HWXImage imageWithData:bundle.artifacts[0].image error:nullptr];
         NSData *td=[image firstSectionNamed:@"__text" inSegment:@"__TEXT"].data;
         expect([[sha256(td) lowercaseString]isEqualToString:hashes[index]]&&
                bundle.artifacts[0].bindings.count==3,
@@ -796,7 +796,7 @@ static void testUnaryPointwiseShapesTraverseTheProductionCompiler(void) {
         expect(bundle!=nil&&diagnostics.errorCount==0,
             @"measured sigmoid geometry compiles through the staged path");
         if(!bundle)continue;
-        HWXImage *image=[HWXImage imageWithData:bundle.artifacts[0].image error:nil];
+        HWXImage *image=[HWXImage imageWithData:bundle.artifacts[0].image error:nullptr];
         NSData *td=[image firstSectionNamed:@"__text" inSegment:@"__TEXT"].data;
         NSData *table=[image firstSectionNamed:@"__kern_0"
             inSegment:@"__KERN_0"].data;

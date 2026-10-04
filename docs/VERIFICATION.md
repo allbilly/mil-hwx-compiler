@@ -191,3 +191,39 @@ test therefore provisions the compiler-produced HWX under the executable's
 `aned` in-memory cache namespace before loading it. That provisioning step is
 the remaining operating-system boundary; no numerical or compiler work is
 delegated to Apple during the tested path.
+
+## Asahi Linux compiler verification, 2026-10-04
+
+Host: Fedora Linux Asahi Remix 42, aarch64, Linux `7.1.13+`, Clang 20.1.8.
+The local dependency bootstrap built libobjc2 2.3, GNUstep Make 2.9.3, and
+GNUstep Base 1.31.1. The compiler links GNUstep Base/libobjc2 and OpenSSL
+instead of Apple Foundation/CommonCrypto. No system libraries were replaced.
+
+`make test -j4` passed the compiler tests, including the H13G packer, both
+H16G end-to-end routes, exact descriptor/object/packing hashes, the CLI's
+repeated-output checks, and the production-route and release-hygiene guards.
+The added support test verifies a known SHA-256 vector and stable, nested JSON
+round trips with escaping, Unicode, booleans, null and numbers. The macOS
+IOSurface runtime contract is explicitly excluded from the Linux gate.
+
+The complete H13G replay comparison passed:
+
+```sh
+make verify-h13g-replay PYTHON=.deps/verify-env/bin/python \
+  H13G_PACKAGE="$HOME/allbilly_ane/gpt2"
+```
+
+All 49 kernels matched all 147 program, constant and coefficient payload hashes
+exported from the original macOS dump, covering 1,574 task descriptors. The
+verifier authenticates the package's MIL and metadata against its checksum
+manifest and verifies the cached HF checkpoint before constructing temporary
+raw BLOBFILEs. Only those sources and raw tensors reach `mil-hwxc`. The emitted
+task stream is remapped using the replay loader's existing BAR mapping before
+comparison; instruction packets and learned coefficients remain byte-exact.
+
+The per-kernel results and compiler executable hash are retained in
+[the Asahi validation report](evidence/2026-10-04-asahi-h13g-validation.json).
+This receipt verifies native compilation and replay payload equivalence. It
+does not repeat the inference run or compare historical whole-file debug
+metadata. The original complete-HWX comparison remains available through
+`make verify-h13g-gpt2` when the full dump is present.

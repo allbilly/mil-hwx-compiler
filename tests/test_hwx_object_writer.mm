@@ -1,5 +1,5 @@
 #import <Foundation/Foundation.h>
-#import <mach-o/loader.h>
+#import "ANEMachO.h"
 
 #import "H16GConvEncoder.h"
 #import "H16GConvChainEncoder.h"
@@ -800,7 +800,7 @@ static NSData *smallRelocatableObject(void) {
         descriptorLayout:HWXProgramDescriptorLayoutLinear];
     return [HWXObjectWriter buildObjectWithTaskDescriptor:td
         constantRegion:[NSMutableData dataWithLength:0x80] bindings:bindings()
-        kernelRelocationOffsets:@[@0x40] programInfo:info error:nil];
+        kernelRelocationOffsets:@[@0x40] programInfo:info error:nullptr];
 }
 
 static void testParserRejectsInvalidSymbolAndRelocationTables(void) {

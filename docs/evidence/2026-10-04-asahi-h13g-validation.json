@@ -1,0 +1,504 @@
+{
+  "host": "Linux-7.1.13+-aarch64-with-glibc2.41",
+  "target": "H13G",
+  "kernels": [
+    {
+      "kernel": "decode_ffn_L0",
+      "tasks": 22,
+      "payloads": {
+        "program": "16c82b8fb92c8cf9fe3fd62021d9a3b3e0610ea8b3e8cc978a32a3d52aa7ddb7",
+        "weights": "87013cdf340a901fc4dbb54384c9aa1591502191a82cc29ff8ae31e16a67e3c2",
+        "constants": "24e43a614a8c704241cbc5b4b8ee2dbb7db971a1ef02038b0b1938be7e0644b0"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_ffn_L10",
+      "tasks": 20,
+      "payloads": {
+        "program": "6b5b38f21b6378898d1ca5a49d704e03b3cbff2fcef06434b7e3573b6a01a8ee",
+        "weights": "bc2c9c690ff4145fd251a7bafa6f316a4a6ca3aa85144176f7efc6e7e50b26e0",
+        "constants": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_ffn_L11",
+      "tasks": 22,
+      "payloads": {
+        "program": "2bd2800e753bf11b1b3a6d6d737c078d926ce047141d49d2b1e3429d6b6832c8",
+        "weights": "bcffd83af7033e3a8870a3062ec1db2802db9bdac6045d94214545787aec57dd",
+        "constants": "9a54e709dc65854b6e5c0b3f1f2b6b8f43ae9ade0acdc56f5b3ab987b6ea4141"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_ffn_L1",
+      "tasks": 22,
+      "payloads": {
+        "program": "eb0f11e35e045ebab9a98679507a7138f903c8bf98ed3117af1d9c960beb22cd",
+        "weights": "14e0ec7139de5eaba10f55ef687b75e28fa199a9087c06e2fffa13f6fa986b41",
+        "constants": "59b2e12698f53474add0f595b8e6022a3cba5fd97f4bd7e1c272009c4fe3d288"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_ffn_L2",
+      "tasks": 22,
+      "payloads": {
+        "program": "370c90cab62f23f8782461af1849fb02e6ec6421605a6463e193ac0057988923",
+        "weights": "0adda0174d16db4b58adaa85f393095c6965577ff8bd914a176a443599e1dd80",
+        "constants": "08cd727818bcdfa08fe7876de8eb90c126b28c67bd2bbd357902bdda1b7c5a52"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_ffn_L3",
+      "tasks": 22,
+      "payloads": {
+        "program": "bb1fa4ffdacfd2f547222b80703982118e405dd9d4312ef63ee9e0b16062e120",
+        "weights": "0f287e93775f6e7dd8068b403ada85cdaef3d1d0533bb4b8b569fd98ae7c3840",
+        "constants": "40a5e66b37237585e923ba1dcc76c0389bc136f589f89653c4603f25067d8a7d"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_ffn_L4",
+      "tasks": 22,
+      "payloads": {
+        "program": "8312d9149270317557fd93cb84347e7f03de7163580406b519581698388fd13e",
+        "weights": "290daa11464711651c68e2f36144601ea997d7c862e85f30893a9ac410dfee97",
+        "constants": "5a7a14c90971fe79a460bc4b877008a37412345c39624ae6308fd9adae53b2ad"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_ffn_L5",
+      "tasks": 22,
+      "payloads": {
+        "program": "42c90040e1833d2f4284ad82dc4cfd66eca19df5e7041d3196e8d711f54e5b58",
+        "weights": "4f24aabbe71feae35e4fde095067e4174d358de1493f92b9cc81f07f17f84166",
+        "constants": "1d9b6895deedfd6e3ad44c0a51d166eeaa929f6502f0b55d88524f24966ed95d"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_ffn_L6",
+      "tasks": 20,
+      "payloads": {
+        "program": "bec98d02882467347e1d962e8f7e471e4f6a28cf07d4e22ba32eb3d3048c98fe",
+        "weights": "16ab9cccddc1698f893a80babdd171d9cb5a04479bce0cdf939b0f570676aecb",
+        "constants": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_ffn_L7",
+      "tasks": 22,
+      "payloads": {
+        "program": "4d1e37698b1e3b974b6655a3e67b836395cb5365373ef2e5b8177d665491601d",
+        "weights": "850d616a8b5c70c309b20b4bb8d16de882ff07ee0f528b77303e3dcdcb576677",
+        "constants": "9f04f7bb3a974ddf86550c05a63e936a524a06840da312dfabdea67e09f0f1cb"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_ffn_L8",
+      "tasks": 22,
+      "payloads": {
+        "program": "be481b326195117d18420b1f71ea45acfe0be9661b26f6b9cd899c20a1065201",
+        "weights": "fd153305a32a7e4f6a02f8fe6de50e97657ce4a5a785cf560184203bed2f399a",
+        "constants": "e24fcda01c7985a60eebd8c7a5ef89e178ba03f041f0efe528b24ee364faa642"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_ffn_L9",
+      "tasks": 22,
+      "payloads": {
+        "program": "68d8c9c4d56a1c1c47c196fb413212b54d5c6df5f964b224821045b9345a4f83",
+        "weights": "998075cbb19b15d1bce3a13ded103526c5ab342d823a1912cc037449a8102d1b",
+        "constants": "82a46ab5c6517e9721fe78a9e4dc0c135d0513277ac239078b8cd84720564615"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_proj_L0",
+      "tasks": 18,
+      "payloads": {
+        "program": "f7d2c6f6e17ae197ab6abc76bf9f0f09a12383b9f136e2784782af44cad7ffd8",
+        "weights": "cc8177875c4cf1dfd78a1c86e90d991d95e66d8525dd23ecf37b65e0bd9e8726",
+        "constants": "2eebd99e7fd8dee48d817cfddf9c59cfa7768aa864fd0b722b16c9802d022478"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_proj_L10",
+      "tasks": 18,
+      "payloads": {
+        "program": "a3e401c23063d959e61f69a56b2e5a59e204eef06f2e74ee1587354655a43cea",
+        "weights": "c68d32293e53987f285441d149b55db5e076f506424ea082a97643534cce680e",
+        "constants": "ace91bd0c5109d1a533948f1a8dec5fcf7b1181dd31a66df89dfb1b92a70c5f6"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_proj_L11",
+      "tasks": 18,
+      "payloads": {
+        "program": "64f0ad5c2a8fff748251cba7086ea46cb40dd22b419f163ec7f314750653e5d0",
+        "weights": "e6355b95897ffb672e50ffa63456704899801da04eb016d430e6f5d815e43310",
+        "constants": "57767b5fea08b9b358a0bc066eef7bb7b0c488fca7c78af18f462bf74a89e086"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_proj_L1",
+      "tasks": 18,
+      "payloads": {
+        "program": "7d04b60502bfba605c1681e393a87e6bf43d9c2276eed1c53b849181347dbb3d",
+        "weights": "94e1671938facc9552130cd1ead8e388f9098949fd7f8d2cf4be9227f73c57c9",
+        "constants": "08d08c154b02b3399812aa550f0fde95b50d715cf8d5fbf84acd2f9b83c4dd77"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_proj_L2",
+      "tasks": 18,
+      "payloads": {
+        "program": "0fa2076467a736c94df80af39c3096b6f9b542d583c20eabde80399ebf589458",
+        "weights": "029f79eaba4244781df35a6c50ca24025c886b5cdb2faadbefc05b03efac5a50",
+        "constants": "8c7911697e1e4d33dd2f732784bd100ee64d404edc90bac2282d6603c6b09e05"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_proj_L3",
+      "tasks": 18,
+      "payloads": {
+        "program": "997a21df99bedae9255cb4fd7f09b85759bd1517643c9ce1575a6fd621d143b0",
+        "weights": "344e18af4a12674ff677c7284dad4b8697f112dc8a5b578fd8fcacc08c0fadfa",
+        "constants": "4d1a177d257b9bdc57dec3cc16330f11eb71fa1fc3efea015eeb25dc4a04932b"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_proj_L4",
+      "tasks": 18,
+      "payloads": {
+        "program": "21648a27432fd8b2f407339173b8035f8a5e3d04c298fb2639b542546d101a8e",
+        "weights": "53b9afe590caf3acb6049c75efe0e8365adc70c8c9706574c13e49fe2344c458",
+        "constants": "df070cac7b8752727ccdff9b0ebf36fcb7b113af36d5c7b846c6293aa4af6493"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_proj_L5",
+      "tasks": 18,
+      "payloads": {
+        "program": "e9bc921ad4b886e9d107c4d3d3714a5b6a9b3122b1b2877cebd3319f7ecf6935",
+        "weights": "ffb4df9aa1031d9cf2b07f0314d9b686f1bd0a6546ada201da228760c1082467",
+        "constants": "abea5c09bc097ac09edd3be5fe14adc1a13561f87709ec710019f14979b991f6"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_proj_L6",
+      "tasks": 18,
+      "payloads": {
+        "program": "87bec95644acbef76c4ff41cd48306cb96c8f451367318d05073c46c69a081eb",
+        "weights": "51cfec25af3138e54385b5606a7b6224c1afd3c9eb8ec55f8ad1070500171cc2",
+        "constants": "44ef95078c5aa6faeb4507ea93ccb83f5f15a6370fe7da8a69100882f68f7757"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_proj_L7",
+      "tasks": 18,
+      "payloads": {
+        "program": "15b218b6e821454b3f11450517422075acb8142c5a08eaa0925ea909519a39a1",
+        "weights": "16a5fb18866ea64b7a1e579733b15d782e57dfd637f404ade073c41e88e9e855",
+        "constants": "bf496a9f8704551e566b4e950d2b46d52d4aba3e0f3afeb69719eab69f6c4559"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_proj_L8",
+      "tasks": 18,
+      "payloads": {
+        "program": "f4689276ee5da537fe531162946c05bcde8afcd47de32e2dd3d767d8011cff12",
+        "weights": "45ceeb42a5aa778a2d0f3cd18b212ac83f2453f454945cb23176257eceff2e64",
+        "constants": "128cf65c5acbb04194d2541adbcd5f3f7a124670c3c657765f3530a0bb130cd5"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "decode_proj_L9",
+      "tasks": 18,
+      "payloads": {
+        "program": "ec390e7a83c3c5a2270984d7f4fb6f871a4925156e719c69ff7c78abf1a60d91",
+        "weights": "a292917318057efc3cf6f313903a9b0775b8ef7a8a409232d4acca3c6f5fa819",
+        "constants": "03b9174f6252e55eeee6f3c11cc21d2a6749dd1717d917eac7c6b7f01f12ea43"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_attn_L0",
+      "tasks": 69,
+      "payloads": {
+        "program": "04768539847f5f854eab3f2e47f5acf61d67c8da0e3a8588a30bb90682e9403b",
+        "weights": "d9d0a510d3a16e57a7ddbe4bd9cfb7e13f6a526bb197fccaf25eff2c8a69cfb0",
+        "constants": "e4c1779eaf3b9a945aba0a0557c448919a6895cd8a0d309cf9f1eafbd26369b0"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_attn_L10",
+      "tasks": 69,
+      "payloads": {
+        "program": "74869a826ab4857b0e30f0af41f1a79d3548c70672005d4940746aa65f62541c",
+        "weights": "91e6acbe6903e72a9f62f59ee98af5589e0b1b9157b1f5bdbbacbc6b077a8ea4",
+        "constants": "8b7f3e06a19521b8439db83de947485d2517aba04fac589ac4672411304bdaef"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_attn_L11",
+      "tasks": 69,
+      "payloads": {
+        "program": "6ac2cf62918d7e78cda4ba26715ada70712f8fb75d41efb24e3d5e0d034003fd",
+        "weights": "9f6005976ad54a97fd357fd1a645e93974de31e64778e6c506ba6b51551c0840",
+        "constants": "ada746d4c75806abdabc3e0b12ddc7476d6c5b9b81eb791caadff6d1a233973c"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_attn_L1",
+      "tasks": 69,
+      "payloads": {
+        "program": "b5ae43affa21991c313ffc37e4cfeba939b4452b0c6c5a60c807d5d58f85104c",
+        "weights": "d6cbff5eb1686fac808af0953b1f422f59a24c83ab322f9c0542a1dcff68b8b0",
+        "constants": "4ab7e57c60c9d736291950ae9aa7caee8a565786eea064eab7a7b190d7556299"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_attn_L2",
+      "tasks": 69,
+      "payloads": {
+        "program": "36c358b7622323e5e9ae5aed7af332d526122d038a08d2e10eb844941b413591",
+        "weights": "5822994da772d6fe09b6cad4ecd850006479020ee70a95526a13ee2230dd6f06",
+        "constants": "1f29d898de3820ff669c4edc0f0f1131a018c92fd83125a6e37433ef1c117092"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_attn_L3",
+      "tasks": 69,
+      "payloads": {
+        "program": "fed73b4f9dd4b73c8f9c1e36056a8acee867dd54d64c2e2855b861712c4508ed",
+        "weights": "73e2e5fd012bff4fad26380d0aff8f7a5b72048da07262c1e6394fcdb1bffc69",
+        "constants": "a124a3ed6fb5acf10d7eebd892b3736ee5eb37d6128280b9c05b60eb3094f962"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_attn_L4",
+      "tasks": 69,
+      "payloads": {
+        "program": "b393bc4267dfdae46bc93b96e904c1497da13af53d9d125f616245a504f78c47",
+        "weights": "bdcd2f3e95ed702677bf357193c406b28e9cf31d0a8839701ac268af0859c6bd",
+        "constants": "22c32374e0a0c657d4f50d50bac2f355c83e252844352d1d3dc06d6434542384"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_attn_L5",
+      "tasks": 69,
+      "payloads": {
+        "program": "f15e4cdc6a8b5f138f7f2894ae7c0c1a30a92d28b39921ca4cf74198d0dd311d",
+        "weights": "1547ac8edba79ca615c22f8312c2eef110018c2ae94bfbc6811147b69c31e73e",
+        "constants": "7d0f0a4d4e04c2e3dd01f80d3e03ca910d6e39bd31f24b86cc126001be8a299b"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_attn_L6",
+      "tasks": 69,
+      "payloads": {
+        "program": "1a920b8e3438e1d7f1e1ade47d7ff37e09bcb0f0287568e2447e90baaa3ecd9f",
+        "weights": "ddc2b118640dc326f55ab9a0ce0af8bf63130bf5e04d8287761c321f8a9812c5",
+        "constants": "bf0006cb3c7a3b50e623bd38c2e4dd0b3ef911ded17fe2c1599d2a1b913e6b33"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_attn_L7",
+      "tasks": 69,
+      "payloads": {
+        "program": "88331e27387657be5c0f527e64ccb2de5e231225831079e4d48f2d2ce2bea804",
+        "weights": "871259e0fc93ef34d01bf92141a588b6a9dfda11737c28451991c94cea441cf2",
+        "constants": "28963831525553a60581417fc8a62c1952dd5c01670432d7283b91e9b429174a"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_attn_L8",
+      "tasks": 69,
+      "payloads": {
+        "program": "758484305f6d39720027b9082675c6860c49f1232ba643b33e0f8a5a9b2e6708",
+        "weights": "7c182fc6fd4b08d41405cdc2638ca7c8ef507f58f61c263d8e51eba7f067e0c7",
+        "constants": "417b7afcb585e4132145f2ac679c15eab1b0c56ef9e5bf129e072968ee9a3788"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_attn_L9",
+      "tasks": 69,
+      "payloads": {
+        "program": "5672386d1ae48e16f9aea644c1d3325b7e75277328a7f7434f19a0ad4b2e826e",
+        "weights": "268067da48300235ed8dd268e0d79266b070417da170f033915a03f166c457ad",
+        "constants": "86f50dca9c997b59c6fc8f01261d0e929965069459dc41f42f0738d1f53fca1e"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_ffn_L0",
+      "tasks": 22,
+      "payloads": {
+        "program": "16c82b8fb92c8cf9fe3fd62021d9a3b3e0610ea8b3e8cc978a32a3d52aa7ddb7",
+        "weights": "87013cdf340a901fc4dbb54384c9aa1591502191a82cc29ff8ae31e16a67e3c2",
+        "constants": "24e43a614a8c704241cbc5b4b8ee2dbb7db971a1ef02038b0b1938be7e0644b0"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_ffn_L10",
+      "tasks": 20,
+      "payloads": {
+        "program": "6b5b38f21b6378898d1ca5a49d704e03b3cbff2fcef06434b7e3573b6a01a8ee",
+        "weights": "bc2c9c690ff4145fd251a7bafa6f316a4a6ca3aa85144176f7efc6e7e50b26e0",
+        "constants": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_ffn_L11",
+      "tasks": 22,
+      "payloads": {
+        "program": "2bd2800e753bf11b1b3a6d6d737c078d926ce047141d49d2b1e3429d6b6832c8",
+        "weights": "bcffd83af7033e3a8870a3062ec1db2802db9bdac6045d94214545787aec57dd",
+        "constants": "9a54e709dc65854b6e5c0b3f1f2b6b8f43ae9ade0acdc56f5b3ab987b6ea4141"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_ffn_L1",
+      "tasks": 22,
+      "payloads": {
+        "program": "eb0f11e35e045ebab9a98679507a7138f903c8bf98ed3117af1d9c960beb22cd",
+        "weights": "14e0ec7139de5eaba10f55ef687b75e28fa199a9087c06e2fffa13f6fa986b41",
+        "constants": "59b2e12698f53474add0f595b8e6022a3cba5fd97f4bd7e1c272009c4fe3d288"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_ffn_L2",
+      "tasks": 22,
+      "payloads": {
+        "program": "370c90cab62f23f8782461af1849fb02e6ec6421605a6463e193ac0057988923",
+        "weights": "0adda0174d16db4b58adaa85f393095c6965577ff8bd914a176a443599e1dd80",
+        "constants": "08cd727818bcdfa08fe7876de8eb90c126b28c67bd2bbd357902bdda1b7c5a52"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_ffn_L3",
+      "tasks": 22,
+      "payloads": {
+        "program": "bb1fa4ffdacfd2f547222b80703982118e405dd9d4312ef63ee9e0b16062e120",
+        "weights": "0f287e93775f6e7dd8068b403ada85cdaef3d1d0533bb4b8b569fd98ae7c3840",
+        "constants": "40a5e66b37237585e923ba1dcc76c0389bc136f589f89653c4603f25067d8a7d"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_ffn_L4",
+      "tasks": 22,
+      "payloads": {
+        "program": "8312d9149270317557fd93cb84347e7f03de7163580406b519581698388fd13e",
+        "weights": "290daa11464711651c68e2f36144601ea997d7c862e85f30893a9ac410dfee97",
+        "constants": "5a7a14c90971fe79a460bc4b877008a37412345c39624ae6308fd9adae53b2ad"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_ffn_L5",
+      "tasks": 22,
+      "payloads": {
+        "program": "42c90040e1833d2f4284ad82dc4cfd66eca19df5e7041d3196e8d711f54e5b58",
+        "weights": "4f24aabbe71feae35e4fde095067e4174d358de1493f92b9cc81f07f17f84166",
+        "constants": "1d9b6895deedfd6e3ad44c0a51d166eeaa929f6502f0b55d88524f24966ed95d"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_ffn_L6",
+      "tasks": 20,
+      "payloads": {
+        "program": "bec98d02882467347e1d962e8f7e471e4f6a28cf07d4e22ba32eb3d3048c98fe",
+        "weights": "16ab9cccddc1698f893a80babdd171d9cb5a04479bce0cdf939b0f570676aecb",
+        "constants": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_ffn_L7",
+      "tasks": 22,
+      "payloads": {
+        "program": "4d1e37698b1e3b974b6655a3e67b836395cb5365373ef2e5b8177d665491601d",
+        "weights": "850d616a8b5c70c309b20b4bb8d16de882ff07ee0f528b77303e3dcdcb576677",
+        "constants": "9f04f7bb3a974ddf86550c05a63e936a524a06840da312dfabdea67e09f0f1cb"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_ffn_L8",
+      "tasks": 22,
+      "payloads": {
+        "program": "be481b326195117d18420b1f71ea45acfe0be9661b26f6b9cd899c20a1065201",
+        "weights": "fd153305a32a7e4f6a02f8fe6de50e97657ce4a5a785cf560184203bed2f399a",
+        "constants": "e24fcda01c7985a60eebd8c7a5ef89e178ba03f041f0efe528b24ee364faa642"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_ffn_L9",
+      "tasks": 22,
+      "payloads": {
+        "program": "68d8c9c4d56a1c1c47c196fb413212b54d5c6df5f964b224821045b9345a4f83",
+        "weights": "998075cbb19b15d1bce3a13ded103526c5ab342d823a1912cc037449a8102d1b",
+        "constants": "82a46ab5c6517e9721fe78a9e4dc0c135d0513277ac239078b8cd84720564615"
+      },
+      "exact": true
+    },
+    {
+      "kernel": "prefill_final_ln_L-1",
+      "tasks": 10,
+      "payloads": {
+        "program": "6635bbf99bcab53b61fc3b1ff1e7d05cd9d1dcaa9802d6c460d21e8ddc69f6fd",
+        "weights": "3ec5e7ae0bd6d477d0c022f45db17795e60fdbaeb2c7de6bca9bd23f6d1a348e",
+        "constants": "02c89bf7fd94e7ed41514bf926f7efd521156cfb3245169cc71a779a24c1abb7"
+      },
+      "exact": true
+    }
+  ],
+  "hardware_execution": false,
+  "whole_hwx_comparison": false,
+  "reference": "Asahi replay payload hashes exported from the macOS dump",
+  "compiler_sha256": "a352c0b149d302f73873a2791e5fc1599224049574f941a14c321fc639bdb58b",
+  "raw_weights_retained": false,
+  "kernels_exact": 49,
+  "payloads_exact": 147,
+  "tasks_exact": 1574
+}

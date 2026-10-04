@@ -1,8 +1,7 @@
 #import "H13GObjectWriter.h"
 #import "HWXImage.h"
 
-#include <mach-o/loader.h>
-#include <mach-o/nlist.h>
+#import "ANEMachO.h"
 
 static NSUInteger alignTo(NSUInteger value, NSUInteger alignment) {
     return (value + alignment - 1) / alignment * alignment;
@@ -23,7 +22,7 @@ static void string(NSMutableData *data, NSUInteger offset, NSString *value) {
 
 static void name(char result[16], NSString *value) {
     memset(result, 0, 16);
-    strlcpy(result, value.UTF8String, 16);
+    memcpy(result, value.UTF8String, strnlen(value.UTF8String, 15));
 }
 
 static NSString *render(NSString *format, NSArray<ANEGraphValue *> *values) {

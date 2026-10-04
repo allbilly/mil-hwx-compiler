@@ -1,5 +1,5 @@
 #import <Foundation/Foundation.h>
-#import <CommonCrypto/CommonDigest.h>
+#import "ANESHA256.h"
 
 #import "H16GConstantPacker.h"
 
@@ -14,8 +14,8 @@ static void expect(BOOL condition, NSString *message) {
 }
 
 static NSString *sha256(NSData *data) {
-    uint8_t digest[CC_SHA256_DIGEST_LENGTH];
-    CC_SHA256(data.bytes, (CC_LONG)data.length, digest);
+    uint8_t digest[ANE_SHA256_DIGEST_LENGTH];
+    ANESHA256(data.bytes, data.length, digest);
     NSMutableString *text = [NSMutableString stringWithCapacity:64];
     for (NSUInteger i = 0; i < sizeof(digest); ++i)
         [text appendFormat:@"%02x", digest[i]];

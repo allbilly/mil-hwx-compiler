@@ -1,5 +1,7 @@
 #import "H16GTarget.h"
 
+#include <mutex>
+
 @implementation H16GOptionalUInt
 - (instancetype)initUnavailableWithProvenance:(NSString *)provenance {
     self = [super init];
@@ -125,8 +127,8 @@
 
 static NSArray<H16GTaskCapability *> *taskCapabilityRows(void) {
     static NSArray<H16GTaskCapability *> *rows;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
+    static std::once_flag once;
+    std::call_once(once, [] {
         NSMutableArray<H16GTaskCapability *> *result = [NSMutableArray array];
         for (NSNumber *sizeNumber in @[@128, @256]) {
             NSUInteger size = sizeNumber.unsignedIntegerValue;
@@ -246,8 +248,8 @@ static NSArray<H16GTaskCapability *> *taskCapabilityRows(void) {
 static NSArray<H16GProgramCompositionCapability *> *
 programCompositionCapabilityRows(void) {
     static NSArray<H16GProgramCompositionCapability *> *rows;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
+    static std::once_flag once;
+    std::call_once(once, [] {
         NSMutableArray<H16GProgramCompositionCapability *> *result =
             [NSMutableArray array];
         for (NSNumber *sizeNumber in @[@128, @256]) {
@@ -356,8 +358,8 @@ programCompositionCapabilityRows(void) {
 @implementation H16GTarget
 + (instancetype)currentTarget {
     static H16GTarget *target;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
+    static std::once_flag once;
+    std::call_once(once, [] {
         target = [[H16GTarget alloc] init];
     });
     return target;

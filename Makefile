@@ -1,7 +1,21 @@
 CXX := clang++
 .DEFAULT_GOAL := all
 CXXFLAGS := -std=c++17 -fobjc-arc -Wall -Wextra -Werror -Iinclude
+HOST_OS := $(shell uname -s)
+ifeq ($(HOST_OS),Darwin)
 FRAMEWORKS := -framework Foundation
+RUNTIME_TEST = $(BUILD)/test_runtime_contract
+else
+# Requires GNUstep Base built against libobjc2, not GCC's legacy libobjc.
+# tools/bootstrap-linux.sh installs an isolated toolchain in .deps/gnustep.
+GNUSTEP_PREFIX ?= $(CURDIR)/.deps/gnustep
+GNUSTEP_CONFIG ?= $(if $(wildcard $(GNUSTEP_PREFIX)/bin/gnustep-config),$(GNUSTEP_PREFIX)/bin/gnustep-config,gnustep-config)
+GNUSTEP_FLAGS = $(shell $(GNUSTEP_CONFIG) --objc-flags 2>/dev/null)
+GNUSTEP_LIBS = $(shell $(GNUSTEP_CONFIG) --base-libs 2>/dev/null)
+CXXFLAGS += $(filter-out -MMD -MP -O2 -g -I%,$(GNUSTEP_FLAGS)) $(patsubst -I%,-isystem %,$(filter -I%,$(GNUSTEP_FLAGS)))
+FRAMEWORKS = $(GNUSTEP_LIBS) -Wl,-rpath,$(GNUSTEP_PREFIX)/lib -lcrypto
+RUNTIME_TEST :=
+endif
 BUILD := build
 
 # The H13G weight packer is independent of Foundation and the H16G compiler.
@@ -65,6 +79,15 @@ BENCHMARK_STATS_SOURCES := lib/Runtime/ANEBenchmarkStats.cpp
 
 .PHONY: all test clean test-cli test-no-pattern-shortcuts
 
+.PHONY: bootstrap-linux verify-h13g-replay
+bootstrap-linux:
+	bash tools/bootstrap-linux.sh
+
+H13G_PACKAGE ?= $(HOME)/allbilly_ane/gpt2
+PYTHON ?= python3
+verify-h13g-replay: $(BUILD)/mil-hwxc
+	$(PYTHON) tests/verify_h13g_replay.py --package "$(H13G_PACKAGE)"
+
 all: test
 
 $(BUILD):
@@ -73,8 +96,11 @@ $(BUILD):
 $(BUILD)/test_diagnostics: tests/test_diagnostics.mm $(SUPPORT_SOURCES) | $(BUILD)
 	$(CXX) $(CXXFLAGS) $^ $(FRAMEWORKS) -o $@
 
+$(BUILD)/test_portable_support: tests/test_portable_support.mm include/ANESHA256.h include/ANEMachO.h include/ANEJSONSerialization.h | $(BUILD)
+	$(CXX) $(CXXFLAGS) $< $(FRAMEWORKS) -o $@
+
 $(BUILD)/test_benchmark_stats: tests/test_benchmark_stats.cpp lib/Runtime/ANEBenchmarkStats.cpp | $(BUILD)
-	$(CXX) $(CXXFLAGS) $^ -o $@
+	$(CXX) $(filter-out -fobjc-arc -fobjc-exceptions -fobjc-runtime=% -fblocks,$(CXXFLAGS)) $^ -o $@
 
 $(BUILD)/test_mil_lexer: tests/test_mil_lexer.mm $(SUPPORT_SOURCES) $(MIL_LEXER_SOURCES) | $(BUILD)
 	$(CXX) $(CXXFLAGS) -Ilib/MIL $^ $(FRAMEWORKS) -o $@
@@ -226,7 +252,7 @@ $(BUILD)/prepare_staged_attention: tests/hardware/prepare_staged_attention.mm $(
 $(BUILD)/test_compiler_e2e: tests/test_compiler_e2e.mm $(PRODUCTION_COMPILER_SOURCES) | $(BUILD)
 	$(CXX) $(CXXFLAGS) -Ilib/MIL -Ilib/IR -Ilib/Transform -Ilib/Planning -Ilib/Driver -Ilib/HWX -Ilib/Model -Ilib/Runtime -Iplugins/H16G -Iplugins/H16G/Encoding $^ $(FRAMEWORKS) -o $@
 
-$(BUILD)/mil-hwxc: tools/mil-hwxc.mm $(PRODUCTION_COMPILER_SOURCES) $(H13G_COMPILER_HEADERS) | $(BUILD)
+$(BUILD)/mil-hwxc: tools/mil-hwxc.mm $(PRODUCTION_COMPILER_SOURCES) $(H13G_COMPILER_HEADERS) include/ANEMachO.h include/ANESHA256.h include/ANEJSONSerialization.h | $(BUILD)
 	$(CXX) $(CXXFLAGS) -Ilib/MIL -Ilib/IR -Ilib/Transform -Ilib/Planning -Ilib/Driver -Ilib/HWX -Ilib/Model -Ilib/Runtime -Iplugins/H16G -Iplugins/H16G/Encoding $(filter %.mm %.cpp,$^) $(FRAMEWORKS) -o $@
 
 test-cli: $(BUILD)/mil-hwxc
@@ -238,8 +264,9 @@ test-no-pattern-shortcuts: $(BUILD)/mil-hwxc
 $(BUILD)/test_runtime_contract: tests/test_runtime_contract.mm lib/HWX/ANEHWXArtifact.mm lib/HWX/HWXImage.mm lib/IR/ANEGraphIR.mm lib/Runtime/ANEExecutableBundle.mm $(RUNTIME_SOURCES) | $(BUILD)
 	$(CXX) $(CXXFLAGS) -Ilib/IR -Ilib/HWX -Ilib/Runtime $^ $(FRAMEWORKS) -framework IOSurface -ldl -o $@
 
-test: $(BUILD)/test_diagnostics $(BUILD)/test_benchmark_stats $(BUILD)/test_mil_lexer $(BUILD)/test_mil_parser $(BUILD)/test_graph_import $(BUILD)/test_operation_graph $(BUILD)/test_graph_transforms $(BUILD)/test_structural_fusion $(BUILD)/test_h16g_legalization $(BUILD)/test_hwx_planning $(BUILD)/test_structured_td_encoding $(BUILD)/test_program_partition $(BUILD)/test_program_composition $(BUILD)/test_hwx_object_writer $(BUILD)/test_h16g_constant_packing $(BUILD)/test_staged_conv_compiler $(BUILD)/test_pass_manager $(BUILD)/test_plugin_registry $(BUILD)/test_compiler_e2e $(BUILD)/test_runtime_contract test-cli test-no-pattern-shortcuts
+test: $(BUILD)/test_diagnostics $(BUILD)/test_portable_support $(BUILD)/test_benchmark_stats $(BUILD)/test_mil_lexer $(BUILD)/test_mil_parser $(BUILD)/test_graph_import $(BUILD)/test_operation_graph $(BUILD)/test_graph_transforms $(BUILD)/test_structural_fusion $(BUILD)/test_h16g_legalization $(BUILD)/test_hwx_planning $(BUILD)/test_structured_td_encoding $(BUILD)/test_program_partition $(BUILD)/test_program_composition $(BUILD)/test_hwx_object_writer $(BUILD)/test_h16g_constant_packing $(BUILD)/test_staged_conv_compiler $(BUILD)/test_pass_manager $(BUILD)/test_plugin_registry $(BUILD)/test_compiler_e2e $(RUNTIME_TEST) test-cli test-no-pattern-shortcuts
 	$(BUILD)/test_diagnostics
+	$(BUILD)/test_portable_support
 	$(BUILD)/test_benchmark_stats
 	$(BUILD)/test_mil_lexer
 	$(BUILD)/test_mil_parser
@@ -258,7 +285,11 @@ test: $(BUILD)/test_diagnostics $(BUILD)/test_benchmark_stats $(BUILD)/test_mil_
 	$(BUILD)/test_pass_manager
 	$(BUILD)/test_plugin_registry
 	$(BUILD)/test_compiler_e2e
-	$(BUILD)/test_runtime_contract
+ifneq ($(RUNTIME_TEST),)
+	$(RUNTIME_TEST)
+else
+	@echo "macOS IOSurface/runtime contract: not available on $(HOST_OS)"
+endif
 	bash tests/test_release_hygiene.sh
 
 clean:

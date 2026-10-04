@@ -9,6 +9,56 @@ The project is a canary for the compiler pipeline recovered in *Inside the M4
 Apple Neural Engine*, Part 4b. It shows which parts of that pipeline are
 understood well enough to reproduce in code and verify on hardware.
 
+## Asahi Linux compiler
+
+The complete H13G/H16G compiler and its software tests run natively on Linux
+arm64. Apple Foundation is replaced by GNUstep Base with libobjc2; Linux hashes
+use OpenSSL, HWX uses portable Mach-O format records, and one-time target-table
+initialization uses C++ `std::call_once`.
+
+Install build prerequisites on Fedora Asahi Remix:
+
+```sh
+sudo dnf install clang make git cmake python3 python3-pip \
+  pkgconf-pkg-config libffi-devel libicu-devel libxml2-devel \
+  libcurl-devel openssl-devel
+bash tools/bootstrap-linux.sh
+make test -j4
+make build/mil-hwxc
+```
+
+The bootstrap installs pinned GNUstep/libobjc2 releases under `.deps/gnustep`
+without root access. The compiler has an embedded library search path, so no
+shell setup or `LD_LIBRARY_PATH` is needed to run it. A custom modern GNUstep
+installation can be selected with `GNUSTEP_PREFIX` and `GNUSTEP_CONFIG`.
+GNUstep packages built against GCC's legacy Objective-C runtime do not support
+the ARC and weak references used here. `make clean` preserves `.deps/`.
+
+The Asahi verification compiled all 49 captured GPT-2 graphs from MIL and the
+cached HF checkpoint. All 147 program/constant/coefficient payloads matched
+the reference hashes in the existing Asahi GPT-2 replay package, covering
+1,574 tasks. See the [verification receipt](docs/VERIFICATION.md#asahi-linux-compiler-verification-2026-10-04)
+for the comparison method and recorded results.
+
+Repeat that comparison without needing the original macOS dump:
+
+```sh
+python3 -m venv --system-site-packages .deps/verify-env
+.deps/verify-env/bin/pip install numpy safetensors
+make verify-h13g-replay PYTHON=.deps/verify-env/bin/python \
+  H13G_PACKAGE="$HOME/allbilly_ane/gpt2"
+```
+
+This requires the existing replay package and its matching cached GPT-2
+checkpoint. The verifier creates temporary raw model blobs, removes them
+after compilation, and writes compiled bundles and a validation report under
+`build/`. The compiler does not read replay instructions or packed weights.
+
+The IOSurface/private Apple runtime and its contract test remain macOS-only.
+Linux `make test` runs the compiler tests and explicitly reports that runtime
+test as unavailable. This port supplies compilation for the separately
+verified Asahi inference path; it does not replace the Linux ANE driver.
+
 ## Local M1 / H13G GPT-2 compiler
 
 `mil-hwxc --target H13G` compiles all 49 graphs captured in
@@ -99,8 +149,8 @@ make test-h13g
 ./build/h13g-pack --help
 ```
 
-The target uses C++17 and Clang/GCC `_Float16` support. It is intended to build
-on Linux arm64 as well; the recorded tests ran on macOS/base M1.
+The target uses C++17 and Clang/GCC `_Float16` support. Its unit tests pass on
+macOS/base M1 and Linux arm64 (Fedora Asahi Remix).
 
 Inputs are headerless FP16 data. Matrices have logical shape `[output,input]`.
 Provide the tile schedule selected by the captured compiler:
@@ -154,12 +204,12 @@ deleted; the checkout does not retain regenerated model weights.
 `results.json`, `software-tests.log`, `compare.py`, and `pack_probe.mm` retain
 the earlier comparison with the upstream H16G packer. Run
 `make build/gpt2-pack-probe` before repeating `python3 compare.py --upstream "$PWD"`.
-H13G packing is also included in `make test` on macOS. ANE execution on Asahi
-has not been tested.
+H13G packing is also included in `make test` on both macOS and Linux. This
+repository's macOS runtime does not execute models on Asahi.
 
 ## Quickstart
 
-### Requirements
+### macOS requirements
 
 - An Apple silicon Mac. Hardware results in this repository were measured on an
   M4 (`Mac16,10`).
@@ -170,7 +220,8 @@ has not been tested.
 - Administrator access for hardware tests. Compilation and software tests do
   not require `sudo`.
 
-There are no third-party package dependencies.
+The macOS build has no third-party package dependencies. Linux uses the open
+dependencies listed above.
 
 Install the command-line tools if needed:
 

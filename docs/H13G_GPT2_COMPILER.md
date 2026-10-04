@@ -83,3 +83,7 @@ execution and token generation through these new compiler bundles have not
 been rerun. `ANEProvisionedRuntime` is still H16G-only; the external GPT-2
 package provides an H13G replay runner. These are distinct from the verified
 MIL-to-HWX compilation result.
+
+For native Asahi compilation and replay comparison, see the
+[setup instructions](../README.md#asahi-linux-compiler) and
+[Linux verification receipt](VERIFICATION.md#asahi-linux-compiler-verification-2026-10-04).

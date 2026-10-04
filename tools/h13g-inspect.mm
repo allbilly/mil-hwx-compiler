@@ -1,4 +1,5 @@
 #import <Foundation/Foundation.h>
+#import "ANEJSONSerialization.h"
 #import "ANEDiagnostic.h"
 #import "ANEGraphVerifier.h"
 #import "H13GGraphContract.h"
@@ -31,9 +32,9 @@ int main(int argc, const char *argv[]) {
         NSMutableArray *names = [NSMutableArray array];
         for (ANEGraphValue *input in function.inputs) [names addObject:input.name];
         for (ANEGraphOperation *op in function.operations) [names addObject:op.result.name];
-        NSData *json = [NSJSONSerialization dataWithJSONObject:
-            @{@"contract": H13GGraphContract(function), @"names": names}
-            options:NSJSONWritingSortedKeys error:nil];
+        NSData *json = ANEJSONData(
+            @{@"contract": H13GGraphContract(function), @"names": names},
+            NO, nullptr);
         fwrite(json.bytes, 1, json.length, stdout);
         putchar('\n');
         return 0;

@@ -1,5 +1,5 @@
 #import <Foundation/Foundation.h>
-#import <CommonCrypto/CommonDigest.h>
+#import "ANESHA256.h"
 
 #import "ANECompiler.h"
 #import "ANEDiagnostic.h"
@@ -22,8 +22,8 @@ static NSData *fixture(NSString *name) {
 }
 
 static NSString *sha256(NSData *data) {
-    uint8_t digest[CC_SHA256_DIGEST_LENGTH];
-    CC_SHA256(data.bytes, (CC_LONG)data.length, digest);
+    uint8_t digest[ANE_SHA256_DIGEST_LENGTH];
+    ANESHA256(data.bytes, data.length, digest);
     NSMutableString *result = [NSMutableString stringWithCapacity:64];
     for (NSUInteger index = 0; index < sizeof(digest); ++index)
         [result appendFormat:@"%02x", digest[index]];

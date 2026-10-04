@@ -2,7 +2,7 @@
 #import "H13GObjectWriter.h"
 #import "../H13GGraphContract.h"
 #import "ANEBlobResolver.h"
-#import <CommonCrypto/CommonDigest.h>
+#import "ANESHA256.h"
 
 #include "H13GConstantPacker.h"
 #include "H13GTaskEncoder.h"
@@ -80,7 +80,7 @@ static void place(NSMutableData *region, NSUInteger offset, NSData *data) {
                       objectLabels:(NSDictionary<NSString *, NSString *> *)objectLabels
                        diagnostics:(ANEDiagnosticEngine *)diagnostics {
     NSData *targetData = [NSData dataWithBytes:kH13GTargetData length:strlen(kH13GTargetData)];
-    NSDictionary *target = [NSJSONSerialization JSONObjectWithData:targetData options:0 error:nil];
+    NSDictionary *target = [NSJSONSerialization JSONObjectWithData:targetData options:0 error:nullptr];
     NSDictionary *contract = H13GGraphContract(function);
     NSString *contractName = nil;
     for (NSString *key in target[@"contracts"])
@@ -176,8 +176,8 @@ static void place(NSMutableData *region, NSUInteger offset, NSData *data) {
         for (NSDictionary *group in plan[@"kernel_groups"]) {
             NSUInteger offset = [group[@"offset"] unsignedIntegerValue];
             NSUInteger length = [group[@"size"] unsignedIntegerValue];
-            unsigned char digest[CC_SHA256_DIGEST_LENGTH];
-            CC_SHA256((const uint8_t *)coefficients.bytes + offset, (CC_LONG)length, digest);
+            unsigned char digest[ANE_SHA256_DIGEST_LENGTH];
+            ANESHA256((const uint8_t *)coefficients.bytes + offset, length, digest);
             NSMutableString *hash = [NSMutableString string];
             for (auto byte : digest) [hash appendFormat:@"%02x", byte];
             NSString *key = [NSString stringWithFormat:@"%@:%lu:%lu:%@", planName,

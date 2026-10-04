@@ -1,5 +1,5 @@
 #import <Foundation/Foundation.h>
-#import <CommonCrypto/CommonDigest.h>
+#import "ANESHA256.h"
 
 #import "H16GConvEncoder.h"
 #import "H16GConvChainEncoder.h"
@@ -32,7 +32,8 @@ static void testWriterBoundsAndZeroInitialization(void) {
     NSError *error = nil;
     expect([writer writeUInt32:0x11223344 atOffset:4 field:@"test" error:&error],
            @"named field write succeeds");
-    const uint32_t *words = (const uint32_t *)writer.data.bytes;
+    __attribute__((objc_precise_lifetime)) NSData *snapshot = writer.data;
+    const uint32_t *words = (const uint32_t *)snapshot.bytes;
     expect(words[0] == 0 && words[1] == 0x11223344 && words[2] == 0 && words[3] == 0,
            @"descriptor starts zeroed and only named field changes");
     expect(![writer writeUInt32:1 atOffset:14 field:@"overflow" error:&error],
@@ -407,8 +408,8 @@ static uint32_t word(NSData *data, NSUInteger offset) {
 }
 
 static NSString *sha256(NSData *data) {
-    uint8_t digest[CC_SHA256_DIGEST_LENGTH];
-    CC_SHA256(data.bytes, (CC_LONG)data.length, digest);
+    uint8_t digest[ANE_SHA256_DIGEST_LENGTH];
+    ANESHA256(data.bytes, data.length, digest);
     NSMutableString *text = [NSMutableString stringWithCapacity:64];
     for (NSUInteger i = 0; i < sizeof(digest); ++i)
         [text appendFormat:@"%02x", digest[i]];
