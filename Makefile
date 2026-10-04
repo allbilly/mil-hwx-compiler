@@ -1,7 +1,30 @@
 CXX := clang++
+.DEFAULT_GOAL := all
 CXXFLAGS := -std=c++17 -fobjc-arc -Wall -Wextra -Werror -Iinclude
 FRAMEWORKS := -framework Foundation
 BUILD := build
+
+# The H13G weight packer is independent of Foundation and the H16G compiler.
+# These two targets also build on Linux with Clang/GCC supporting _Float16.
+H13G_CXX ?= c++
+H13G_CXXFLAGS := -std=c++17 -O2 -Wall -Wextra -Werror -ffp-contract=off -Iplugins/H13G/Encoding
+H13G_PACKER := plugins/H13G/Encoding/H13GConstantPacker.cpp
+
+.PHONY: test-h13g
+
+$(BUILD)/h13g-pack: tools/h13g-pack.cpp $(H13G_PACKER) plugins/H13G/Encoding/H13GConstantPacker.h | $(BUILD)
+	$(H13G_CXX) $(H13G_CXXFLAGS) tools/h13g-pack.cpp $(H13G_PACKER) -o $@
+
+$(BUILD)/test_h13g_constant_packing: tests/test_h13g_constant_packing.cpp $(H13G_PACKER) plugins/H13G/Encoding/H13GConstantPacker.h | $(BUILD)
+	$(H13G_CXX) $(H13G_CXXFLAGS) tests/test_h13g_constant_packing.cpp $(H13G_PACKER) -o $@
+
+test-h13g: $(BUILD)/h13g-pack $(BUILD)/test_h13g_constant_packing
+	$(BUILD)/test_h13g_constant_packing
+
+test: test-h13g
+
+$(BUILD)/gpt2-pack-probe: pack_probe.mm plugins/H16G/Encoding/H16GConstantPacker.mm | $(BUILD)
+	$(CXX) $(CXXFLAGS) -Iplugins/H16G/Encoding $^ $(FRAMEWORKS) -o $@
 
 SUPPORT_SOURCES := lib/Support/ANEDiagnostic.mm
 MIL_LEXER_SOURCES := lib/MIL/MILLexer.mm

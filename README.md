@@ -8,6 +8,80 @@ The project is a canary for the compiler pipeline recovered in *Inside the M4
 Apple Neural Engine*, Part 4b. It shows which parts of that pipeline are
 understood well enough to reproduce in code and verify on hardware.
 
+## Local M1 / H13G weight-packing addition
+
+This checkout adds a standalone C++ packer for the captured base-M1 GPT-2
+layouts in `plugins/H13G/Encoding/H13GConstantPacker.{h,cpp}`. It generates
+coefficient bytes from ordinary little-endian FP16 matrices and biases. It
+does not call Apple's compiler or read dumped coefficient bytes during packing.
+The upstream MIL-to-HWX compiler still targets H16G; this addition does not
+provide an H13G instruction encoder or an M1 runtime.
+
+Build and test the packer without Foundation or other macOS frameworks:
+
+```sh
+make test-h13g
+./build/h13g-pack --help
+```
+
+The target uses C++17 and Clang/GCC `_Float16` support. It is intended to build
+on Linux arm64 as well; the recorded tests ran on macOS/base M1.
+
+Inputs are headerless FP16 data. Matrices have logical shape `[output,input]`.
+Provide the tile schedule selected by the captured compiler:
+
+```sh
+# 768 input/output channels, a captured decode projection schedule.
+./build/h13g-pack matrix W.fp16 bias.fp16 packed.bin 768 768 16,16,16
+
+# LayerNorm affine coefficients, captured linear layout.
+./build/h13g-pack affine gamma.fp16 beta.fp16 affine.bin linear 1
+
+# The captured layer-6 FFN uses engine pairs and bias scaling by 32.
+./build/h13g-pack affine gamma.fp16 beta.fp16 affine.bin engine_pairs 32
+```
+
+There are 16 engines. Each scheduled stripe stores its bias values followed by
+the matrix transposed to `[input,stripe-output]`. Each engine block ends with
+zero padding to 64 bytes. The captured GPT-2 schedules are:
+
+| Operation | Stripe widths per engine |
+| --- | --- |
+| Decode Q/K/V and projection/down matrices | `16,16,16` |
+| FFN expansion | `32,32,32,32,32,32` |
+| Prefill Q | `32,16` |
+| Other prefill attention matrices | `16,16,16` |
+
+Affine packing computes `beta/gamma*scale` in FP32 from already FP16-rounded
+inputs, then rounds to FP16. Linear layout stores `[ratio,gamma]`. Engine-pair
+layout stores `(gamma,ratio)` pairs for channels `engine + 16*group`; the
+captured FFN layers 6 and 10 use scales 32 and 2. Shapes alone do not select
+these schedules or affine strategies. This is a verified GPT-2 layout packer,
+not a general ANE compiler.
+
+To reproduce the reference comparison, install the Python dependencies from
+`~/ane/gpt2/requirements.txt`, keep the original dump available, and run:
+
+```sh
+python3 tests/verify_h13g_gpt2.py \
+  --package ~/ane/gpt2 \
+  --dump ~/Desktop/GPT2-ANE-Dump
+```
+
+The verifier reads the existing HF cache and captured recipes. Every learned
+byte comes from the native C++ packer. It compares 132 matrix/bias blocks,
+94 affine blocks, and all 147 complete payloads across 49 original HWX files.
+All matched exactly in `h13g-validation.json`. It also checks affine rounding
+against NumPy over 63,472 finite nonzero gamma bit patterns in each of six
+layout/scale combinations, plus malformed CLI inputs. Temporary weights are
+deleted; the checkout does not retain regenerated model weights.
+
+`results.json`, `software-tests.log`, `compare.py`, and `pack_probe.mm` retain
+the earlier comparison with the upstream H16G packer. Run
+`make build/gpt2-pack-probe` before repeating `python3 compare.py --upstream "$PWD"`.
+H13G packing is also included in `make test` on macOS. ANE execution on Asahi
+has not been tested.
+
 ## Quickstart
 
 ### Requirements

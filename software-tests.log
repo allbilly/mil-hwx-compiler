@@ -1,0 +1,51 @@
+bash tests/test_cli.sh
+bash tests/test_no_pattern_shortcuts.sh
+build/test_h13g_constant_packing
+H13G mixed stripes, bias ordering, engine alignment, affine folding, rounding, invalid inputs: PASS
+compiled target=H16G artifacts=1 output=build/cli-conv
+compiled target=H16G artifacts=1 output=build/cli-attention
+compiled target=H16G artifacts=1 output=build/cli-w8a8
+production staged-route guard: PASS
+compiler CLI: PASS
+build/test_diagnostics
+diagnostics: PASS
+build/test_benchmark_stats
+benchmark statistics: PASS
+build/test_mil_lexer
+mil lexer: PASS
+build/test_mil_parser
+mil parser: PASS
+build/test_graph_import
+graph import: PASS
+build/test_operation_graph
+operation graph: PASS
+build/test_graph_transforms
+graph transforms: PASS
+build/test_structural_fusion
+structural fusion: PASS
+build/test_h16g_legalization
+H16G legalization: PASS
+build/test_hwx_planning
+HWX planning: PASS
+build/test_structured_td_encoding
+structured TD encoding: PASS
+build/test_program_partition
+program partition planning: PASS
+build/test_program_composition
+program composition: PASS
+build/test_hwx_object_writer
+HWX object writer: PASS
+build/test_h16g_constant_packing
+H16G constant packing: PASS
+build/test_staged_conv_compiler
+staged compiler: PASS
+build/test_pass_manager
+pass manager: PASS
+build/test_plugin_registry
+plugin registry: PASS
+build/test_compiler_e2e
+compiler e2e: PASS
+build/test_runtime_contract
+runtime contract: PASS
+bash tests/test_release_hygiene.sh
+release hygiene: PASS
